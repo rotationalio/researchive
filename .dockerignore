@@ -1,0 +1,11 @@
+Dockerfile
+
+__pycache__/
+*.py[cod]
+
+node_modules
+yarn.lock
+
+.DS_Store
+.git
+.gitignore

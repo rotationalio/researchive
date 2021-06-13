@@ -1,0 +1,6 @@
+FROM node:16-buster
+
+WORKDIR /usr/src/web
+
+EXPOSE 3000
+CMD ["yarn", "run", "start"]
