@@ -7,8 +7,12 @@ services:
     image: researchive-api
     volumes:
       - ./api:/usr/src/api
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     ports:
       - "8000:8000"
+
   web:
     build:
       context: ./web
@@ -20,3 +24,36 @@ services:
       - ./web:/usr/src/web
     ports:
       - "3000:3000"
+
+  worker:
+    build:
+      context: ./api
+      dockerfile: ./Dockerfile.dev
+    command: celery worker --app=worker.celery --loglevel=info --logfile=logs/celery.log
+    volumes:
+      - ./api:/usr/src/api
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - web
+      - redis
+
+  redis:
+    image: redis:6-alpine
+
+  monitoring:
+    build:
+      context: ./api
+      dockerfile: ./Dockerfile.dev
+    command:  flower --app=worker.celery --port=5555 --broker=$CELERY_BROKER_URL
+    volumes:
+      - ./api:/usr/src/api
+    ports:
+      - "5556:5555"
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    depends_on:
+      - web
+      - redis
+      - worker

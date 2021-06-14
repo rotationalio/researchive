@@ -1,9 +1,6 @@
 import axios from 'axios';
+import { Layers } from 'react-feather';
 import React, { useState, useEffect } from 'react';
-
-const statusStyle = {
-  cursor: 'help'
-}
 
 // Status fetches the current API status and displays it.
 const Status = () => {
@@ -11,17 +8,26 @@ const Status = () => {
 
   useEffect(() => {
     const fetchStatus = async () => {
-      const { data } = await axios.get("http://localhost:8000/")
+      const { data } = await axios.get("http://localhost:8000/status")
       setStatus(data);
     }
     fetchStatus();
   }, [])
 
+  const color = status.status === "ok" ? "#198754" : "#dc3545";
+
   return (
-    <span id="api-status" title={`Status: ${status.status}, Last updated: ${status.timestamp}`} style={statusStyle}>
-      <i className={`fas fa-circle ${status.status == 'ok' ? 'text-success' : 'text-danger'}`}></i>{' '}
-      <span className="p-1">Using Researchive API v{status.version}</span>
-    </span>
+    <>
+    <li className="nav-item">
+      <a className="nav-link"
+         title={`Status: ${status.status}, Last updated: ${status.timestamp}`}
+         href="http://localhost:8000/docs"
+      >
+        <Layers color={color} className="feather" />
+        API v{status.version} Docs
+      </a>
+    </li>
+    </>
   );
 }
 
