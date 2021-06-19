@@ -1,0 +1,21 @@
+version: "3.9"
+services:
+  db:
+    build:
+      context: ./postgres
+      dockerfile: ./Dockerfile
+    image: todos-db
+
+  api:
+    build:
+      context: ./api
+      dockerfile: ./Dockerfile
+    image: todos-api
+    volumes:
+      - ./api:/usr/src/todos
+    environment:
+      - DATABASE_URL=postgresql://postgres:supersecret@db:5432/todos
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
