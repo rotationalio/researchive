@@ -1,1 +1,3 @@
-FROM python:3.9-alpine
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
+
+COPY . /app
